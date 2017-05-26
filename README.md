@@ -1,6 +1,4 @@
-# spc-state-backup
---------
-Our private repo for kube-state-backup with SPC customization.
+# Our private repo for kube-state-backup with SPC customization.
 ===========
 [![Docker Repository on Quay](https://quay.io/repository/stackpoint/spc-state-backup/status "Docker Repository on Quay")](https://quay.io/repository/stackpoint/spc-state-backup)
 
