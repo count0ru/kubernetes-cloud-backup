@@ -3,7 +3,7 @@ Our private repo for kube-state-backup with SPC customization.
 
 [![Docker Repository on Quay](https://quay.io/repository/stackpoint/spc-state-backup/status "Docker Repository on Quay")](https://quay.io/repository/stackpoint/spc-state-backup)
 
-Kubernetes state backup script, designed to be ran as Kubernetes Job.
+Kubernetes state backup script, designed to be run as Kubernetes Job.
 
 Setup
 -----
