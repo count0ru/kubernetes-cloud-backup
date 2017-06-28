@@ -75,6 +75,7 @@ function tar_files() {
 	cd /tmp/backup
 	tar czvf ${TARFILENAME} *
 	cd /
+	echo ""
 }
 
 function upload_s3() {
@@ -86,6 +87,7 @@ function upload_s3() {
 	fi
 
 	# upload assets to S3 bucket
+	echo ""
 	echo "Upload assets backup to s3 ${BUCKET}"
 	aws s3 cp /tmp/backup/${TARFILENAME} s3://${BUCKET}/ --region ${REGION}
 	echo "✓ Assets backup uploaded"
@@ -102,6 +104,7 @@ function upload_gcs() {
 	fi
 
 	# upload assets to GCS bucket
+	echo ""
 	echo "Upload assets backup to GCS ${BUCKET}"
 	gsutil cp /tmp/backup/${TARFILENAME} gs://${BUCKET}/
 	echo "✓ Assets backup uploaded"
