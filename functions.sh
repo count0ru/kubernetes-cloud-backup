@@ -61,6 +61,7 @@ function dump_state() {
 	echo "Dumping Helm releases" > /dev/stderr
 	/kubectl --namespace=kube-system get --export -o=json -l OWNER=TILLER configmap | \
 	jq '.items[] |
+		select(.metadata.labels.NAME | contains("spc-") | not) |
 		del(
 		.metadata.uid,
 		.metadata.selfLink,
