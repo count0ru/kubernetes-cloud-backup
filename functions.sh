@@ -80,10 +80,10 @@ function tar_files() {
 }
 
 function upload_s3() {
-	# check if bucket exits, if not create it
+	# check if bucket exists, if not create it
 	if aws s3 ls "s3://$BUCKET" 2>&1 | grep -q 'NoSuchBucket'
 	then
-		echo "$BUCKET does not exit, creating it"
+		echo "$BUCKET does not exist, creating it"
 		aws s3 mb s3://${BUCKET} --region ${REGION}
 	fi
 
@@ -95,12 +95,12 @@ function upload_s3() {
 }
 
 function upload_gcs() {
-	# check if bucket exits, if not create it
+	# check if bucket exists, if not create it
 	if gsutil ls 2>&1 | grep -q -w "$BUCKET"
 	then
-		echo "$BUCKET does exit"
+		echo "$BUCKET does exist"
 	else
-		echo "$BUCKET does not exit, creating it"
+		echo "$BUCKET does not exist, creating it"
 		gsutil mb -l ${REGION} gs://${BUCKET}
 	fi
 
@@ -108,5 +108,22 @@ function upload_gcs() {
 	echo ""
 	echo "Upload assets backup to GCS ${BUCKET}"
 	gsutil cp /tmp/backup/${TARFILENAME} gs://${BUCKET}/
+	echo "✓ Assets backup uploaded"
+}
+
+function upload_azure_blob() {
+	# check if container exists, if not create it
+	if az storage container list 2>&1 | grep -w "$CONTAINER"
+	then
+		echo "$CONTAINER does exist"
+	else
+		echo "$CONTAINER does not exist, creating it"
+		az storage container create --name ${CONTAINER}
+	fi
+
+	# upload assets to azure blob
+	echo ""
+	echo "Upload assets backup to Azure ${CONTAINER}"
+	az storage blob upload --container-name ${CONTAINER} --file ${TARFILENAME} --name ${TARFILENAME}
 	echo "✓ Assets backup uploaded"
 }
