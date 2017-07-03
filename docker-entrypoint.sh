@@ -20,4 +20,7 @@ then
 elif [ "${STORAGE}" = "gcs" ]
 then
   upload_gcs
+elif [ "${STORAGE}" = "azure" ]
+then
+  upload_azure_blob
 fi
