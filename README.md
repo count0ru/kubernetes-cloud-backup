@@ -7,7 +7,7 @@ Kubernetes state backup script, designed to be run as Kubernetes Job.
 
 Setup
 -----
-Use the Helm chart and deploy a kubernetes `CronJob` primitive in your kubernetes (1.5 and up) cluster ensuring backups of Kubernetes resource definitions to your S3/GCS bucket.
+Use the Helm chart and deploy a kubernetes `CronJob` primitive in your kubernetes (1.5 and up) cluster ensuring backups of Kubernetes resource definitions to your S3/GCS/Azure cloud storage.
 
 
 Caveat
