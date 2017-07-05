@@ -1,4 +1,4 @@
-Kubernetes state backup
+Kubernetes Cloud Backup
 ===========
 
 [![Docker Repository on Quay](https://quay.io/repository/stackpoint/spc-state-backup/status "Docker Repository on Quay")](https://quay.io/repository/stackpoint/spc-state-backup)
