@@ -1,0 +1,92 @@
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  schedule: "{{ .Values.schedule }}"
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+{{- if not .Values.jobCleanup.enabled }}
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 10
+{{- end }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: {{ .Values.restartPolicy }}
+          dnsPolicy: ClusterFirst
+          terminationGracePeriodSeconds: 30
+          serviceAccountName: {{ template "fullname" . }}
+          containers:
+          - name: backup
+            image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+            imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+            env:
+            - name: GLOBALRESOURCES
+              value: "{{ .Values.kubeState.globalResources }}"
+            - name: RESOURCETYPES
+              value: "{{ .Values.kubeState.resourceTypes }}"
+{{- if .Values.aws.enabled }}
+            - name: STORAGE
+              value: "aws"
+            - name: REGION
+              value: "{{ .Values.aws.region }}"
+            - name: BUCKET
+              value: "{{ .Values.aws.bucket }}"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}-aws
+                  key: accessKeyId
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}-aws
+                  key: secretAccessKey
+{{- end }}
+{{- if .Values.gcs.enabled }}
+            - name: STORAGE
+              value: "gcs"
+            - name: REGION
+              value: "{{ .Values.gcs.region }}"
+            - name: BUCKET
+              value: "{{ .Values.gcs.bucket }}"
+{{- end }}
+{{- if .Values.azure.enabled }}
+            - name: STORAGE
+              value: "azure"
+            - name: CONTAINER
+              value: "{{ .Values.azure.storageContainer }}"
+            - name: AZURE_STORAGE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}-azure
+                  key: storageAccount
+            - name: AZURE_STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "fullname" . }}-azure
+                  key: storageAccessKey
+{{- end }}
+            resources:
+{{ toYaml .Values.resources | indent 14 }}
+            volumeMounts:
+            - name: cache
+              mountPath: /tmp/backup
+{{- if .Values.gcs.enabled }}
+            - name: boto
+              mountPath: /backup
+{{- end }}
+          volumes:
+          - name: cache
+            emptyDir: {}
+{{- if .Values.gcs.enabled }}
+          - name: boto
+            secret:
+              secretName: {{ template "fullname" . }}-gcs
+{{- end }}

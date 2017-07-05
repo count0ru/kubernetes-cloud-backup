@@ -1,0 +1,27 @@
+{{- if .Values.jobCleanup.enabled -}}
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: {{ template "fullname" . }}-cleaner
+  labels:
+    app: {{ template "fullname" . }}-cleaner
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  schedule: "{{ .Values.jobCleanup.schedule }}"
+  concurrencyPolicy: {{ .Values.jobCleanup.concurrencyPolicy }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: {{ .Values.jobCleanup.restartPolicy }}
+          serviceAccountName: {{ template "fullname" . }}
+          containers:
+          - name: cleanup
+            image: "{{ .Values.jobCleanup.image }}:{{ .Values.jobCleanup.imageTag }}"
+            imagePullPolicy: {{ default "" .Values.jobCleanup.imagePullPolicy | quote }}
+            command: [ '/bin/bash', '-c', '/hyperkube kubectl get jobs -l app={{ template "fullname" . }} -o name --sort-by=metadata.creationTimestamp | head -n -2 | xargs /hyperkube kubectl delete; exit 0' ]
+            resources:
+{{ toYaml .Values.jobCleanup.resources | indent 14 }}
+{{- end -}}
