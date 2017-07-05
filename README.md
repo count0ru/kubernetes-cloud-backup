@@ -18,7 +18,7 @@ Check [Restoring from Backup](restore.md) doc.
 
 Caveat
 ------
-This is using a kubernetes alpha feature ([cronjobs](https://kubernetes.io/docs/user-guide/jobs/#handling-pod-and-container-failures)) and and `alpha` features need to be ebaled in your cluster.  See the cronjob  [documentation](https://kubernetes.io/docs/user-guide/cron-jobs/) for details.
+This is using a Kubernetes alpha feature [Cron Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/), `batch/v2alpha1` API group needs to be [enabled](https://kubernetes.io/docs/reference/api-overview/#enabling-api-groups) in your cluster to make it work.
 
-If your kubernetes cluster runs under version 1.5 or less, `spec.successfulJobsHistoryLimit` and `spec.failedJobsHistoryLimit` will be ignored as they've been introduced in version 1.6. In this case, running an export every 10 minutes will quickly run up your Job (and therefor Pod) count, causing a linear increase in master server load.
+If your Kubernetes cluster runs under version 1.5 or less, `spec.successfulJobsHistoryLimit` and `spec.failedJobsHistoryLimit` will be ignored as they've been introduced in version 1.6. In this case, running an export every 10 minutes will quickly run up your Job (and therefor Pod) count, causing a linear increase in master server load.
 A fix for this is to deploy a [cleanup job](job-cleanup.yaml) to clean the old kube-backup jobs.
