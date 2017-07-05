@@ -1,0 +1,105 @@
+##  Docker image and tag version
+##
+image: quay.io/stackpoint/spc-state-backup
+imageTag: 0.1.11
+
+## Specify a imagePullPolicy
+## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+##
+imagePullPolicy: IfNotPresent
+
+## Schedule when to run
+## ref: https://kubernetes.io/docs/user-guide/cron-jobs/#schedule
+##
+schedule: "*/50 * * * *"
+
+## Concurrency Policy
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency_policy
+##
+concurrencyPolicy: Replace
+
+## Restart Policy
+##
+restartPolicy: OnFailure
+
+## Backup to AWS S3 bucket
+##
+aws:
+  enabled: false
+  accessKeyId: ""
+  secretAccessKey: ""
+  bucket: ""
+  region: ""
+
+## Backup to GCS bucket
+## check the URL below how to obtain HMAC authentication keys
+## ref: https://cloud.google.com/storage/docs/migrating#keys
+##
+gcs:
+  enabled: false
+  projectId: ""
+  ## Service Account Key must be encoded with base64
+  ## e.g. `cat service-account.json | base64 -w 0`
+  serviceAccountKey: ""
+  bucket: ""
+  # multi-regional storage class: us/eu/asia
+  region: ""
+
+## Backup to Azure blob storage
+##
+azure:
+  enabled: false
+  storageAccount: ""
+  storageAccessKey: ""
+  storageContainer: ""
+
+## Kubernetes resources type
+##
+kubeState:
+  globalResources: "storageclasses"
+  resourceTypes: "svc,ingress,configmap,secrets,ds,rc,deployment,statefulset,job,cronjob,serviceaccount,thirdpartyresource,networkpolicy,storageclass"
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 50Mi
+    cpu: 10m
+  limits:
+    memory: 100Mi
+    cpu: 100m
+
+## Clean the old kube-state-backup jobs
+## Only set it for kubernetes version is 1.5 or less
+##
+jobCleanup:
+  ## Enable old jobs clean up
+  enabled: false
+  ##  Docker image and tag version
+  ##
+  image: quay.io/coreos/hyperkube
+  imageTag: v1.6.6
+  ## Specify a imagePullPolicy
+  ## 'Always' if imageTag is 'latest', else set to 'IfNotPresent'
+  ##
+  imagePullPolicy: IfNotPresent
+  ## Schedule when to run
+  ##
+  schedule: "1 6 * * *"
+  ## Concurrency Policy
+  ##
+  concurrencyPolicy: Replace
+  ## Restart Policy
+  ##
+  restartPolicy: OnFailure
+  ## Configure resource requests and limits
+  ##
+  resources:
+    requests:
+      memory: 50Mi
+      cpu: 10m
+    limits:
+      memory: 256Mi
+      cpu: 100m
