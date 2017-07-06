@@ -10,10 +10,12 @@ Setup
 -----
 Use the Helm [chart](helm/spc-state-backup) and deploy it to Kubernetes as `CronJob` which will ensure cluster backups of Kubernetes resource definitions to your S3/GCS/Azure cloud storage.
 
+For more information, [see the tutorial](https://stackpointcloud.com/community/tutorial/using-the-kubernetes-cloud-backup).
+
 
 Restore
 -------
-Check [Restoring from Backup](restore.md) doc.
+For instructions on how to restore from backup, [see the tutorial](https://stackpointcloud.com/community/tutorial/using-the-kubernetes-cloud-backup).
 
 
 Caveat
